@@ -7,6 +7,7 @@ This repository contains the code and instructions to reproduce the results from
 The data set splits as used in the experiments can be downloaded from [here](cistern.cis.lmu.de/lm-lexical-inference).
 After extraction, the data should be organized into a directory structure like this (the 'patterns' directory is already part of this repository):
 
+```
 data
 ├── levy_holt
 │   ├── dev.txt
@@ -23,12 +24,12 @@ data
     ├── dev.csv
     ├── test.csv -> ../../raw/sherliic/test.csv
     └── train.csv
-
+```
 
 ## Patterns from Wikipedia
 The pattern files (in data/patterns) are licensed under a
-[Creative Commons Attribution-ShareAlike 4.0 International License][http://creativecommons.org/licenses/by-sa/4.0/].
-[![CC BY-SA 4.0][https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg]][http://creativecommons.org/licenses/by-sa/4.0/]
+[Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/).
+[![CC BY-SA 4.0](https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by-sa/4.0/)
 
 
 # Code
