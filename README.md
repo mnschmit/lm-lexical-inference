@@ -1,6 +1,19 @@
 # Language Models for Lexical Inference in Context
 This repository contains the code and instructions to reproduce the results from the EACL 2021 long paper "Language Models for Lexical Inference in Context".
 
+If this code is useful for your work, please consider citing:
+```
+@inproceedings{schmitt-schuetze-2021-language,
+    title = "Language Models for Lexical Inference in Context",
+    author = {Schmitt, Martin  and
+      Sch{\"u}tze, Hinrich},
+    booktitle = "Proceedings of the 2021 Conference of the European Chapter of the Association for Computational Linguistics",
+    month = apr,
+    year = "2021",
+    address = "Online",
+    publisher = "Association for Computational Linguistics"
+}
+```
 
 # Data
 ## Levy/Holt and SherLIiC (including data splits)
