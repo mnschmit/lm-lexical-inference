@@ -2,10 +2,13 @@ from typing import Callable
 import argparse
 from pathlib import Path
 import os
+from torch.utils.data import DataLoader
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import LearningRateMonitor
 from pytorch_lightning.loggers.test_tube import TestTubeLogger
 from pytorch_lightning import LightningModule
+from ..data.sherliic import SherliicSentences, SherliicPattern
+from ..data.levy_holt import LevyHoltSentences, LevyHoltPattern
 
 
 def add_generic_args(parser) -> None:
@@ -34,7 +37,10 @@ def add_generic_args(parser) -> None:
     )
     parser.add_argument("--max_grad_norm", dest="gradient_clip_val",
                         default=1.0, type=float, help="Max gradient norm")
-
+    # parser.add_argument("--do_train", action="store_true",
+    #                     help="Whether to run training.")
+    # parser.add_argument("--do_predict", action="store_true",
+    #                     help="Whether to run predictions on the test set.")
     parser.add_argument(
         "--gradient_accumulation_steps",
         dest="accumulate_grad_batches",
@@ -90,3 +96,58 @@ def generic_train(
     trainer.fit(model)
 
     return trainer, model
+
+
+str2dataset = {
+    "NLI": (SherliicSentences, LevyHoltSentences),
+    "MultNat": (SherliicPattern, LevyHoltPattern)
+}
+
+
+def add_dataset_specific_args(parser: argparse.ArgumentParser):
+    parser.add_argument('--dataset', default=None)
+    parser.add_argument('--levy_holt', action='store_true')
+    parser.add_argument('--pattern_file', default=None)
+    parser.add_argument('--antipattern_file', default=None)
+    parser.add_argument('--best_k_patterns', type=int, default=None)
+    parser.add_argument('--curated_auto', action='store_true')
+
+
+def load_custom_data(args: argparse.Namespace, model_str: str,
+                     model: pl.LightningModule) -> DataLoader:
+    if args.dataset is not None:
+        data_cls = str2dataset[args.model]
+        kwargs = {}
+
+        if args.levy_holt:
+            data_cls = data_cls[1]
+        else:
+            data_cls = data_cls[0]
+
+            if model_str == "MultNat":
+                kwargs['pattern_idx'] = -1
+                kwargs['antipattern_idx'] = -1
+            if args.pattern_file is None:
+                kwargs['with_examples'] = True
+
+            if args.curated_auto:
+                kwargs['with_examples'] = True
+                kwargs['curated_auto'] = True
+
+        if args.pattern_file is not None:
+            kwargs['pattern_file'] = args.pattern_file
+            kwargs['antipattern_file'] = args.antipattern_file
+            kwargs['best_k_patterns'] = args.best_k_patterns
+
+        data = data_cls(args.dataset, **kwargs)
+        dataloader = DataLoader(
+            data,
+            batch_size=model.hparams.eval_batch_size,
+            num_workers=model.hparams.num_workers,
+            collate_fn=model.collate,
+            pin_memory=True
+        )
+    else:
+        dataloader = None
+
+    return dataloader
