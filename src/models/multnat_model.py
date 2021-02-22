@@ -3,7 +3,7 @@ import argparse
 import torch
 import torch.nn.functional as F
 import pytorch_lightning as pl
-from pytorch_lightning.metrics.functional import f1
+from pytorch_lightning.metrics.functional import f1_score
 from pytorch_lightning.metrics.functional.classification import precision, recall,\
     precision_recall_curve
 from transformers import (
@@ -153,8 +153,8 @@ class MultNatModel(pl.LightningModule):
         enc, anti_enc, labels = batch
         loss, logits, anti_logits = self.forward(enc, anti_enc, labels)
 
-        self.log('train_loss', loss)
-        return loss
+        # return loss
+        return {'loss': loss}
 
     def validation_step(self, batch, batch_idx):
         enc, anti_enc, labels = batch
@@ -183,11 +183,11 @@ class MultNatModel(pl.LightningModule):
 
         pred = (scores > self.classification_threshold).long()
 
-        f1_neg, f1_pos = f1(pred, truth, 2, average=None)
+        f1_neg, f1_pos = f1_score(pred, truth, num_classes=2, reduction='none')
         prec_neg, prec_pos = precision(
-            pred, truth, num_classes=2, class_reduction=None)
+            pred, truth, num_classes=2, reduction='none')
         rec_neg, rec_pos = recall(
-            pred, truth, num_classes=2, class_reduction=None)
+            pred, truth, num_classes=2, reduction='none')
 
         prec, rec, _ = precision_recall_curve(scores, truth)
         area_under_pr_rec_curve = compute_auc(
@@ -200,7 +200,9 @@ class MultNatModel(pl.LightningModule):
             'Precision': prec_pos, 'Recall': rec_pos,
             'AUC': area_under_pr_rec_curve
         }
-        self.log_dict(metrics)
+
+        return {'val_loss': val_loss_mean, 'AUC': area_under_pr_rec_curve,
+                'F1': f1_pos, 'log': metrics}
 
     def set_score_outfile(self, fname):
         self.score_outfile = fname
@@ -216,7 +218,9 @@ class MultNatModel(pl.LightningModule):
         return res
 
     def test_epoch_end(self, outputs):
-        self.validation_epoch_end(outputs)
+        eval_results = self.validation_epoch_end(outputs)
+        print(eval_results['log'])
+        return eval_results['log']
 
     def setup(self, stage):
         if self.hparams.levy_holt:

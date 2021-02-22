@@ -4,7 +4,6 @@ from pathlib import Path
 import os
 from torch.utils.data import DataLoader
 import pytorch_lightning as pl
-from pytorch_lightning.callbacks import LearningRateMonitor
 from pytorch_lightning.loggers.test_tube import TestTubeLogger
 from pytorch_lightning import LightningModule
 from ..data.sherliic import SherliicSentences, SherliicPattern
@@ -70,7 +69,6 @@ def generic_train(
         filepath=cdir, prefix="checkpoint",
         monitor="AUC", mode="max", save_top_k=1
     )
-    lr_logger_callback = LearningRateMonitor(logging_interval='epoch')
     logger = TestTubeLogger('tt_logs', name=args.experiment_name)
 
     train_params = {}
@@ -86,7 +84,6 @@ def generic_train(
     trainer = pl.Trainer.from_argparse_args(
         args,
         weights_summary=None,
-        callbacks=[lr_logger_callback],
         logger=logger,
         checkpoint_callback=checkpoint_callback,
         deterministic=True,

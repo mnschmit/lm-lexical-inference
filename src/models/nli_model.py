@@ -4,7 +4,7 @@ import torch.nn.functional as F
 import pytorch_lightning as pl
 from pytorch_lightning.metrics.functional.classification import precision, recall,\
     precision_recall_curve
-from pytorch_lightning.metrics.functional import f1
+from pytorch_lightning.metrics.functional import f1_score
 from transformers import (
     AdamW,
     AutoConfig,
@@ -131,11 +131,11 @@ class NLIModel(pl.LightningModule):
 
         pred = (scores[:, 1] > self.classification_threshold).long()
 
-        f1_neg, f1_pos = f1(pred, truth, 2, average=None)
+        f1_neg, f1_pos = f1_score(pred, truth, num_classes=2, reduction='none')
         prec_neg, prec_pos = precision(
-            pred, truth, num_classes=2, class_reduction=None)
+            pred, truth, num_classes=2, reduction='none')
         rec_neg, rec_pos = recall(
-            pred, truth, num_classes=2, class_reduction=None)
+            pred, truth, num_classes=2, reduction='none')
 
         prec, rec, _ = precision_recall_curve(scores[:, 1], truth)
         area_under_pr_rec_curve = compute_auc(
@@ -167,6 +167,7 @@ class NLIModel(pl.LightningModule):
 
     def test_epoch_end(self, outputs):
         eval_results = self.validation_epoch_end(outputs)
+        print(eval_results['log'])
         return eval_results['log']
 
     def setup(self, stage):
