@@ -17,7 +17,7 @@ If this code is useful for your work, please consider citing:
 
 # Data
 ## Levy/Holt and SherLIiC (including data splits)
-The data set splits as used in the experiments can be downloaded from [here](cistern.cis.lmu.de/lm-lexical-inference).
+The data set splits as used in the experiments can be downloaded from [here](http://cistern.cis.lmu.de/lm-lexical-inference).
 After extraction, the data should be organized into a directory structure like this (the 'patterns' directory is already part of this repository):
 
 ```
