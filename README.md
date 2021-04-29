@@ -3,15 +3,17 @@ This repository contains the code and instructions to reproduce the results from
 
 If this code is useful for your work, please consider citing:
 ```
-@inproceedings{schmitt-schuetze-2021-language,
+@inproceedings{schmitt-schutze-2021-language,
     title = "Language Models for Lexical Inference in Context",
     author = {Schmitt, Martin  and
       Sch{\"u}tze, Hinrich},
-    booktitle = "Proceedings of the 2021 Conference of the European Chapter of the Association for Computational Linguistics",
+    booktitle = "Proceedings of the 16th Conference of the European Chapter of the Association for Computational Linguistics: Main Volume",
     month = apr,
     year = "2021",
     address = "Online",
-    publisher = "Association for Computational Linguistics"
+    publisher = "Association for Computational Linguistics",
+    url = "https://www.aclweb.org/anthology/2021.eacl-main.108",
+    pages = "1267--1280"
 }
 ```
 
