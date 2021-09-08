@@ -98,7 +98,7 @@ Score files, whose creation is explained in the previous section, can also be us
 
 
 # Additional Results on Transfer Learning
-The original paper does not investigate how well a model trained on one data set performs on the other. Here we present more results on that.
+The main paper does not investigate how well a model trained on one data set performs on the other. Here we present more results on that (the results are also available in the appendix).
 Note that in this setting we assume that the target data set is not available at all, i.e., we do not use it at all - neither for finding patterns in AUTPAT nor for tuning the classification threshold. We use the standard thresholds, i.e., 0.5 for NLI and 0.0 for the pattern-based methods.
 
 
